@@ -1,0 +1,51 @@
+apiVersion: '2021-07-01'
+location: eastus
+name: datalk-group
+properties:
+  containers:
+  - name: datalk-api
+    properties:
+      image: acrminilab367.azurecr.io/datalk-api:v1
+      environmentVariables:
+      - name: MONGO_URI
+        secureValue: "MONGO-CONN"
+      - name: OLLAMA_URL
+        value: "http://ollama:11434/api/generate"
+      ports:
+      - port: 8000
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGb: 1.5
+
+  - name: ollama
+    properties:
+      image: ollama/ollama
+      command:
+        - "ollama"
+        - "serve"
+      ports:
+      - port: 11434
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGb: 2.0
+      volumeMounts:
+      - mountPath: /root/.ollama
+        name: ollama-data
+
+  volumes:
+  - name: ollama-data
+    emptyDir: {} # ou AzureFile, se quiser persistir modelos
+
+  osType: Linux
+  ipAddress:
+    type: Public
+    dnsNameLabel: datalk-api
+    ports:
+    - protocol: tcp
+      port: 8000
+    - protocol: tcp
+      port: 11434
+  restartPolicy: Always
+type: Microsoft.ContainerInstance/containerGroups
