@@ -205,7 +205,7 @@
         "kind": 2,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "def create_store(store: Store) -> Store:\n    if stores.find_one({\"store_id\": store.store_id}):\n        raise HTTPException(400, detail=\"store_id já existe\")\n    stores.insert_one(store.dict())\n    return {\"msg\": \"Loja inserida\", \"store\": store}\n@app.get(\"/stores/{store_id}\")\ndef read_store(store_id: int) -> Store:\n    doc = stores.find_one({\"store_id\": store_id})\n    if not doc:\n        raise HTTPException(404, detail=\"Loja não encontrada\")",
+        "peekOfCode": "def create_store(store: Store) -> Store:\n    if stores.find_one({\"store_id\": store.store_id}):\n        raise HTTPException(400, detail=\"store_id já existe\")\n    stores.insert_one(store.dict())\n    return store\n@app.get(\"/stores/{store_id}\")\ndef read_store(store_id: int) -> Store:\n    doc = stores.find_one({\"store_id\": store_id})\n    if not doc:\n        raise HTTPException(404, detail=\"Loja não encontrada\")",
         "detail": "api.main",
         "documentation": {}
     },
@@ -214,7 +214,7 @@
         "kind": 2,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "def read_store(store_id: int) -> Store:\n    doc = stores.find_one({\"store_id\": store_id})\n    if not doc:\n        raise HTTPException(404, detail=\"Loja não encontrada\")\n    doc[\"_id\"] = str(doc[\"_id\"])\n    return doc\n@app.put(\"/stores/{store_id}\")\ndef update_store(store_id: int, store: Store) -> Store:\n    result = stores.update_one({\"store_id\": store_id}, {\"$set\": store.dict()})\n    if result.matched_count == 0:",
+        "peekOfCode": "def read_store(store_id: int) -> Store:\n    doc = stores.find_one({\"store_id\": store_id})\n    if not doc:\n        raise HTTPException(404, detail=\"Loja não encontrada\")\n    doc[\"_id\"] = str(doc[\"_id\"])\n    return doc\n@app.put(\"/stores/{store_id}\")\ndef update_store(store_id: int, store: Store):\n    result = stores.update_one({\"store_id\": store_id}, {\"$set\": store.dict()})\n    if result.matched_count == 0:",
         "detail": "api.main",
         "documentation": {}
     },
@@ -223,7 +223,7 @@
         "kind": 2,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "def update_store(store_id: int, store: Store) -> Store:\n    result = stores.update_one({\"store_id\": store_id}, {\"$set\": store.dict()})\n    if result.matched_count == 0:\n        raise HTTPException(404, detail=\"Loja não encontrada\")\n    return {\"msg\": \"Loja atualizada\"}\n@app.delete(\"/stores/{store_id}\")\ndef delete_store(store_id: int):\n    result = stores.delete_one({\"store_id\": store_id})\n    if result.deleted_count == 0:\n        raise HTTPException(404, detail=\"Loja não encontrada\")",
+        "peekOfCode": "def update_store(store_id: int, store: Store):\n    result = stores.update_one({\"store_id\": store_id}, {\"$set\": store.dict()})\n    if result.matched_count == 0:\n        raise HTTPException(404, detail=\"Loja não encontrada\")\n    return {\"msg\": \"Loja atualizada\"}\n@app.delete(\"/stores/{store_id}\")\ndef delete_store(store_id: int):\n    result = stores.delete_one({\"store_id\": store_id})\n    if result.deleted_count == 0:\n        raise HTTPException(404, detail=\"Loja não encontrada\")",
         "detail": "api.main",
         "documentation": {}
     },
@@ -259,7 +259,7 @@
         "kind": 5,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "app = FastAPI(title=\"DATALK Stores CRUD + Ollama\")\nMONGO_URI = os.getenv(\"MONGO_URI\")\nDB_NAME = \"datalk\"\nCOLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",",
+        "peekOfCode": "app = FastAPI(title=\"DATALK Stores CRUD + Ollama\")\nMONGO_URI = os.getenv(\"MONGO_URI\", \"mongodb://mongo:27017\")\nDB_NAME = \"datalk\"\nCOLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\", \"http://ollama:11434/api/generate\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",",
         "detail": "api.main",
         "documentation": {}
     },
@@ -268,7 +268,7 @@
         "kind": 5,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "MONGO_URI = os.getenv(\"MONGO_URI\")\nDB_NAME = \"datalk\"\nCOLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",",
+        "peekOfCode": "MONGO_URI = os.getenv(\"MONGO_URI\", \"mongodb://mongo:27017\")\nDB_NAME = \"datalk\"\nCOLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\", \"http://ollama:11434/api/generate\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",",
         "detail": "api.main",
         "documentation": {}
     },
@@ -277,7 +277,7 @@
         "kind": 5,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "DB_NAME = \"datalk\"\nCOLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",",
+        "peekOfCode": "DB_NAME = \"datalk\"\nCOLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\", \"http://ollama:11434/api/generate\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",",
         "detail": "api.main",
         "documentation": {}
     },
@@ -286,7 +286,7 @@
         "kind": 5,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "COLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",\n    \"store_latitude\": \"latitud\",",
+        "peekOfCode": "COLL_STORES = \"stores\"\nCOLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\", \"http://ollama:11434/api/generate\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",\n    \"store_latitude\": \"latitud\",",
         "detail": "api.main",
         "documentation": {}
     },
@@ -295,7 +295,7 @@
         "kind": 5,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "COLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",\n    \"store_latitude\": \"latitud\",\n    \"store_longitude\": \"logitude\",",
+        "peekOfCode": "COLL_ORDERS = \"orders\"\nOLLAMA_URL = os.getenv(\"OLLAMA_URL\", \"http://ollama:11434/api/generate\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",\n    \"store_latitude\": \"latitud\",\n    \"store_longitude\": \"logitude\",",
         "detail": "api.main",
         "documentation": {}
     },
@@ -304,7 +304,7 @@
         "kind": 5,
         "importPath": "api.main",
         "description": "api.main",
-        "peekOfCode": "OLLAMA_URL = os.getenv(\"OLLAMA_URL\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",\n    \"store_latitude\": \"latitud\",\n    \"store_longitude\": \"logitude\",\n}",
+        "peekOfCode": "OLLAMA_URL = os.getenv(\"OLLAMA_URL\", \"http://ollama:11434/api/generate\")\nDICT_IGUALDADE = {\n    \"store_id\": \"id\",\n    \"hub_id\": \"hub id\",\n    \"store_name\": \"nome da loja\",\n    \"store_segment\": \"segmento\",\n    \"store_plan_price\": \"preço\",\n    \"store_latitude\": \"latitud\",\n    \"store_longitude\": \"logitude\",\n}",
         "detail": "api.main",
         "documentation": {}
     },

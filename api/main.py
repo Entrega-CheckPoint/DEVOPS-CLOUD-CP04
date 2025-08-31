@@ -8,11 +8,12 @@ import os
 
 app = FastAPI(title="DATALK Stores CRUD + Ollama")
 
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongo:27017")
 DB_NAME = "datalk"
 COLL_STORES = "stores"
 COLL_ORDERS = "orders"
-OLLAMA_URL = os.getenv("OLLAMA_URL")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434/api/generate")
+
 DICT_IGUALDADE = {
     "store_id": "id",
     "hub_id": "hub id",
@@ -59,7 +60,7 @@ def create_store(store: Store) -> Store:
     if stores.find_one({"store_id": store.store_id}):
         raise HTTPException(400, detail="store_id já existe")
     stores.insert_one(store.dict())
-    return {"msg": "Loja inserida", "store": store}
+    return store
 
 
 @app.get("/stores/{store_id}")
@@ -72,7 +73,7 @@ def read_store(store_id: int) -> Store:
 
 
 @app.put("/stores/{store_id}")
-def update_store(store_id: int, store: Store) -> Store:
+def update_store(store_id: int, store: Store):
     result = stores.update_one({"store_id": store_id}, {"$set": store.dict()})
     if result.matched_count == 0:
         raise HTTPException(404, detail="Loja não encontrada")

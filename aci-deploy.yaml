@@ -1,6 +1,8 @@
 apiVersion: '2021-07-01'
 location: eastus
 name: datalk-group
+identity:
+  type: SystemAssigned
 properties:
   containers:
   - name: datalk-api
@@ -8,7 +10,7 @@ properties:
       image: acrminilab367.azurecr.io/datalk-api:v1
       environmentVariables:
       - name: MONGO_URI
-        secureValue: "MONGO-CONN"
+        secureValue: "https://kv-mini-lab-367.vault.azure.net/secrets/MONGO-CONN" # também não funciona
       - name: OLLAMA_URL
         value: "http://ollama:11434/api/generate"
       ports:
@@ -36,7 +38,12 @@ properties:
 
   volumes:
   - name: ollama-data
-    emptyDir: {} # ou AzureFile, se quiser persistir modelos
+    emptyDir: {} 
+
+  imageRegistryCredentials:
+  - server: acrminilab367.azurecr.io
+    username: $REGISTRY_USERNAME # Não funciona, tem que trocar 
+    password: $REGISTRY_PASSWORD # Não funciona, tem que trocar
 
   osType: Linux
   ipAddress:
