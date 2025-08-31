@@ -7,10 +7,10 @@ properties:
   containers:
   - name: datalk-api
     properties:
-      image: acrminilab367.azurecr.io/datalk-api:v1
+      image: acrminilab367.azurecr.io/datalk-api:v2
       environmentVariables:
       - name: MONGO_URI
-        secureValue: "https://kv-mini-lab-367.vault.azure.net/secrets/MONGO-CONN" # também não funciona
+        secureValue: "https://kv-mini-lab-367.vault.azure.net/secrets/MONGO-CONN" # substituir
       - name: OLLAMA_URL
         value: "http://ollama:11434/api/generate"
       ports:
@@ -42,8 +42,8 @@ properties:
 
   imageRegistryCredentials:
   - server: acrminilab367.azurecr.io
-    username: $REGISTRY_USERNAME # Não funciona, tem que trocar 
-    password: $REGISTRY_PASSWORD # Não funciona, tem que trocar
+    username: $REGISTRY_USERNAME # substituir 
+    password: $REGISTRY_PASSWORD # substituir
 
   osType: Linux
   ipAddress:
