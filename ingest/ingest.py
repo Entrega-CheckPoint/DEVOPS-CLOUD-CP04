@@ -22,7 +22,6 @@ DATETIME_COLS = [
 
 FORMAT_US_AMPM = "%m/%d/%Y %I:%M:%S %p"
 
-
 def normalize(df: pd.DataFrame) -> pd.DataFrame:
     for col in DATETIME_COLS:
         if col in df.columns:
@@ -31,6 +30,7 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
     # trocar NaT/NaN por None para o Mongo aceitar
     df = df.replace({pd.NaT: None}).where(df.notnull(), None)
     return df
+
 
 
 def create_indexes(coll):
@@ -62,20 +62,20 @@ def main():
     chunksize = 50_000
     orders = 0
     stores = 0
-
+    
     for i, df in enumerate(pd.read_csv(ORDERS_PATH, chunksize=chunksize), start=1):
         df = normalize(df)
         recs = df.to_dict(orient="records")
         orders_coll.insert_many(recs, ordered=False)
         orders += len(recs)
         print(f"Chunk {i} inserido. Total={orders}")
-
+        
     print("[INGEST] Criando índices…")
     create_indexes(orders_coll)
     print("Total orders:", orders_coll.count_documents({}))
 
     for i, df in enumerate(
-        pd.read_csv(STORES_PATH, chunksize=chunksize, sep=",", encoding="latin-1"),
+        pd.read_csv(STORES_PATH, chunksize=chunksize,sep=',', encoding="latin-1"),
         start=1,
     ):
         df = normalize(df)
