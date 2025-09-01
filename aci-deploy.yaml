@@ -1,58 +1,70 @@
-apiVersion: '2021-07-01'
+apiVersion: "2021-07-01"
 location: eastus
 name: datalk-group
 identity:
   type: SystemAssigned
 properties:
   containers:
-  - name: datalk-api
-    properties:
-      image: acrminilab367.azurecr.io/datalk-api:v2
-      environmentVariables:
-      - name: MONGO_URI
-        secureValue: "https://kv-mini-lab-367.vault.azure.net/secrets/MONGO-CONN" # substituir
-      - name: OLLAMA_URL
-        value: "http://ollama:11434/api/generate"
-      ports:
-      - port: 8000
-      resources:
-        requests:
-          cpu: 1.0
-          memoryInGb: 1.5
+    - name: datalk-api
+      properties:
+        image: acrminilab367.azurecr.io/datalk-api:v2
+        environmentVariables:
+          - name: MONGO_URI
+            secureValue: "https://kv-mini-lab-367.vault.azure.net/secrets/MONGO-CONN" # substituir
+          - name: OLLAMA_URL
+            value: "http://ollama:11434/api/generate"
+        ports:
+          - port: 8000
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGb: 1.5
+        livenessProbe:
+          httpGet:
+            path: /docs
+            port: 8000
+          periodSeconds: 30
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /docs
+            port: 8000
+          periodSeconds: 10
+          failureThreshold: 3
 
-  - name: ollama
-    properties:
-      image: ollama/ollama
-      command:
-        - "ollama"
-        - "serve"
-      ports:
-      - port: 11434
-      resources:
-        requests:
-          cpu: 1.0
-          memoryInGb: 2.0
-      volumeMounts:
-      - mountPath: /root/.ollama
-        name: ollama-data
+    - name: ollama
+      properties:
+        image: ollama/ollama
+        command:
+          - "ollama"
+          - "serve"
+        ports:
+          - port: 11434
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGb: 2.0
+        volumeMounts:
+          - mountPath: /root/.ollama
+            name: ollama-data
 
   volumes:
-  - name: ollama-data
-    emptyDir: {} 
+    - name: ollama-data
+      emptyDir: {}
 
   imageRegistryCredentials:
-  - server: acrminilab367.azurecr.io
-    username: $REGISTRY_USERNAME # substituir 
-    password: $REGISTRY_PASSWORD # substituir
+    - server: acrminilab367.azurecr.io
+      username: $REGISTRY_USERNAME # substituir
+      password: $REGISTRY_PASSWORD # substituir
 
   osType: Linux
   ipAddress:
     type: Public
     dnsNameLabel: datalk-api
     ports:
-    - protocol: tcp
-      port: 8000
-    - protocol: tcp
-      port: 11434
+      - protocol: tcp
+        port: 8000
+      - protocol: tcp
+        port: 11434
   restartPolicy: Always
 type: Microsoft.ContainerInstance/containerGroups
