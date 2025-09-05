@@ -1,4 +1,4 @@
-# DEVOPS-CLOUD-CP04
+# $DEVOPS-CLOUD-CP04$
 
 Implementar a migração completa para ACR e ACI
 
@@ -194,3 +194,6 @@ az container create \
   Confirme se o modelo foi baixado (docker exec -it ollama ollama list)
   az container logs --resource-group rg-mini-lab --name datalk-group --container-name ollama
 
+## Link do video
+
+[CP04 - Video](https://www.youtube.com/watch?v=mSqR44Tojyk)
